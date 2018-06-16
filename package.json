@@ -1,0 +1,30 @@
+{
+  "name": "openhabAgent",
+  "version": "1.0.0",
+  "description": "openhab agent for Vicinity platform",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "keywords": [
+    "Agent",
+    "node",
+    "openhab",
+    "IoT"
+  ],
+  "author": "joralmir",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^1.12.1"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.2",
+    "mongoose": "^4.13.3",
+    "morgan": "^1.9.0",
+    "nodemailer": "^4.4.0",
+    "winston": "^2.4.0"
+  }
+}
