@@ -12,7 +12,7 @@ exports.start = function (req, res, next) {
   request.send('Gateway', 'objects/login', 'GET', {})
   .then(function(response){
     if(!response.error){
-      return request.send('Openhab', 'things', 'GET', {});
+      return fileMgmt.findFiles('./configuration/');
     } else {
       return new Promise(
         function(resolve, reject) { reject(false); }
@@ -20,16 +20,12 @@ exports.start = function (req, res, next) {
     }
   })
   .then(function(response){
-    info.discovery = parseDiscovery(JSON.parse(response));
-    return fileMgmt.findFiles('./configuration/');
-  })
-  .then(function(response){
     info.tds = getThingDescriptions(response);
     return request.send('Gateway', 'agents/' + config.agid + '/objects', 'GET', {})
   })
   .then(function(response){
     info.platform = JSON.parse(response).message;
-    return fileMgmt.read('./configuration/mapping.json');
+    return fileMgmt.read('./configuration/registered.json');
   })
   .then(function(response){
     info.registered = JSON.parse(response);
@@ -42,14 +38,6 @@ exports.start = function (req, res, next) {
 };
 
 // Private Functions
-function parseDiscovery(x){
-  var y = [];
-  for(var i = 0, l = x.length; i < l; i++){
-    y.push({"name": x[i].label, "infrastructure-id": x[i].UID})
-  }
-  return y;
-}
-
 function getThingDescriptions(x){
   var y = [];
   for(var i = 0, l = x.length; i < l; i++){

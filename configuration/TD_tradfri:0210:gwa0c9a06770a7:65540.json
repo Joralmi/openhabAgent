@@ -1,0 +1,9 @@
+{
+"adapter-id": "openhabAdapter",
+"infrastructure-id": "tradfri:0210:gwa0c9a06770a7:65540",
+"type": "adapters:Lightbulb",
+"name":"Room",
+"properties": [],
+"actions": [],
+"events:": []
+}
