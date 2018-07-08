@@ -31,14 +31,30 @@ function parseDiscovery(x){
       item["infrastructure-id"] = x[i].UID;
       item["adapter-id"] = config.agid;
       item.type = mapping.types[x[i].thingTypeUID].type;
-      item.write = mapping.types[x[i].thingTypeUID].write;
-      for(var j = 0, k = x[i].channels.length; j < k; j++){
+      item.keywords = mapping.types[x[i].thingTypeUID].keywords;
+      for(var j = 0, ll = x[i].channels.length; j < ll; j++){
         if(x[i].channels[j].linkedItems.length > 0){
-          var prop = {};
-          prop.pid = x[i].channels[j].linkedItems[0];
-          prop.schema = x[i].channels[j].itemType;
-          prop.monitors = mapping.interactions[x[i].channels[j].id];
-          properties.push(prop);
+          var interactions = mapping.interactions[x[i].channels[j].id];
+          for(var k = 0, lll = interactions.length; k < lll; k++){
+            var prop = {};
+            if(lll > 1){
+              prop.pid = x[i].channels[j].linkedItems[0] + '_' + k;
+            } else {
+              prop.pid = x[i].channels[j].linkedItems[0];
+            }
+            if(interactions[k].write){
+              prop.write_link = {
+                "href" : "/objects/{oid}/properties/{pid}",
+                "input" : mapping.schema[x[i].channels[j].itemType][interactions[k].type]
+              };
+            }
+            prop.read_link = {
+              "href" : "/objects/{oid}/properties/{pid}",
+              "output" : mapping.schema[x[i].channels[j].itemType][interactions[k].type]
+            };
+            prop.monitors = interactions[k].type;
+            properties.push(prop);
+          }
         }
       }
       item.properties = properties;

@@ -14,11 +14,11 @@ var api = require('./agent/routes/api');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-app.use('/api', api)
+app.use('/api', api);
 
 app.listen(port);
 console.log('Server listening on: ' + port);
 
 app.use(function(req, res) {
-  res.status(404).send({url: req.originalUrl + ' not found'})
+  res.status(404).send({url: req.originalUrl + ' not found'});
 });
