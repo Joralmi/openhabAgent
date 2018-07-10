@@ -2,6 +2,8 @@
 
 var request = require('../services/request'),
     fileMgmt = require('../services/fileMgmt'),
+    discovery = require('../services/discovery'),
+    // agent = require('../services/agent'),
     logger = require('../../middlewares/logger'),
     config = require('../../configuration/configuration');
 
@@ -12,7 +14,7 @@ exports.start = function (req, res, next) {
   request.send('Gateway', 'objects/login', 'GET', {})
   .then(function(response){
     if(!response.error){
-      return fileMgmt.findFiles('./configuration/');
+      return discovery.discover();
     } else {
       return new Promise(
         function(resolve, reject) { reject(false); }
@@ -20,8 +22,8 @@ exports.start = function (req, res, next) {
     }
   })
   .then(function(response){
-    info.tds = getThingDescriptions(response);
-    return request.send('Gateway', 'agents/' + config.agid + '/objects', 'GET', {})
+    info.tds = response;
+    return request.send('Gateway', 'agents/' + config.agid + '/objects', 'GET', {});
   })
   .then(function(response){
     info.platform = JSON.parse(response).message;
@@ -29,21 +31,13 @@ exports.start = function (req, res, next) {
   })
   .then(function(response){
     info.registered = JSON.parse(response);
-    res.json(info);
+    return agent.process(info);
+  })
+  .then(function(response){
+    res.json(response);
   })
   .catch(function(err){
     logger.debug(err);
     res.json({error: true, data: err});
   });
 };
-
-// Private Functions
-function getThingDescriptions(x){
-  var y = [];
-  for(var i = 0, l = x.length; i < l; i++){
-    if(x[i].indexOf("TD_") !== -1){
-      y.push(x[i]);
-    }
-  }
-  return y;
-}

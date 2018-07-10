@@ -8,7 +8,7 @@ exports.findFiles = function(path) {
       resolve(response);
     });
   });
-}
+};
 
 exports.read = function(file){
   return new Promise(function(resolve, reject){
@@ -17,7 +17,7 @@ exports.read = function(file){
         resolve(response);
     });
   });
-}
+};
 
 exports.write = function(file){
   return new Promise(function(resolve, reject){
@@ -26,4 +26,4 @@ exports.write = function(file){
         resolve('The file has been saved!');
     });
   });
-}
+};
