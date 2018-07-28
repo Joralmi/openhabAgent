@@ -9,11 +9,15 @@ var express = require('express'),
 var configuration = require('./configuration/configuration');
 
 // Routes
-var api = require('./agent/routes/api');
+var agent = require('./agent/routes/routes');
+var adapter = require('./adapter/routes/routes');
+var api = require('./api/routes/routes');
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use('/agent', agent);
+app.use('/adapter', adapter);
 app.use('/api', api);
 
 app.listen(port);

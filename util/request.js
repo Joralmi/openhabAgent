@@ -1,7 +1,7 @@
 // Global Objects
 
-var config = require('../../configuration/configuration');
-var logger = require('../../middlewares/logger');
+var config = require('../configuration/configuration');
+var logger = require('../middlewares/logger');
 var request = require('request-promise');
 
 // Functions

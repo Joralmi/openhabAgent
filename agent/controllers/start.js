@@ -12,7 +12,7 @@ exports.start = function (req, res, next) {
     return getRegistered.oids();
   })
   .then(function(response){
-    return logItems(response);
+    return logItems.logItems(response);
   })
   .then(function(response){
     res.json(response);

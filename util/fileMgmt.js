@@ -10,6 +10,10 @@ exports.findFiles = function(path) {
   });
 };
 
+/**
+* Read a file
+* @param {String} file Path to the file
+*/
 exports.read = function(file){
   return new Promise(function(resolve, reject){
     fs.readFile(file, 'utf8', function(err, response){
@@ -19,9 +23,14 @@ exports.read = function(file){
   });
 };
 
-exports.write = function(file){
+/**
+* Append string to a file
+* @param {String} file Path to the file
+* @param {String} string String to append to the file
+*/
+exports.write = function(file, string){
   return new Promise(function(resolve, reject){
-    fs.writeFile(file, 'utf8', function(err){
+    fs.writeFile(file, string, 'utf8', function(err){
       if (err) reject('Problem writing file: ' + err);
         resolve('The file has been saved!');
     });
