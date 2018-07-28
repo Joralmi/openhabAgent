@@ -1,6 +1,6 @@
 'use strict';
 
-var request = require('../services/request'),
+var request = require('../../util/request'),
     mapping = require('../../configuration/platformMapping'),
     config = require('../../configuration/configuration'),
     logger = require('../../middlewares/logger');

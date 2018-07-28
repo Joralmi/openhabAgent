@@ -1,37 +1,18 @@
 'use strict';
 
-var request = require('../services/request'),
-    fileMgmt = require('../services/fileMgmt'),
-    discovery = require('../services/discovery'),
-    // agent = require('../services/agent'),
-    logger = require('../../middlewares/logger'),
-    config = require('../../configuration/configuration');
+var logAgent = require('../services/logAgent'),
+    logItems = require('../services/logItems'),
+    getRegistered = require('../services/getRegistered'),
+    logger = require('../../middlewares/logger');
 
 exports.start = function (req, res, next) {
-  var info = {};
-
-  // request.send('Openhab', 'things', 'GET', {})
-  request.send('Gateway', 'objects/login', 'GET', {})
+  var oids = [];
+  logAgent.logAgent()
   .then(function(response){
-    if(!response.error){
-      return discovery.discover();
-    } else {
-      return new Promise(
-        function(resolve, reject) { reject(false); }
-      );
-    }
+    return getRegistered.oids();
   })
   .then(function(response){
-    info.tds = response;
-    return request.send('Gateway', 'agents/' + config.agid + '/objects', 'GET', {});
-  })
-  .then(function(response){
-    info.platform = JSON.parse(response).message;
-    return fileMgmt.read('./configuration/registered.json');
-  })
-  .then(function(response){
-    info.registered = JSON.parse(response);
-    return agent.process(info);
+    return logItems(response);
   })
   .then(function(response){
     res.json(response);

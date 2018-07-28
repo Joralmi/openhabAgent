@@ -11,7 +11,7 @@ config.agid = "72e7c282-aca0-4aa4-8cd7-0f10d2d5ac97";
 Urls
 */
 config.urlOpenhab = "http://192.168.0.74:8080/rest/";
-config.urlGateway = "http://192.168.0.74:8181/api/"
+config.urlGateway = "http://192.168.0.74:8181/api/";
 
 /*
 Headers
