@@ -18,7 +18,7 @@ exports.process = function(info){
 
       // Items in tds file but not in registered file
       var toRegister = findItems(info.tds, info.registered, "infrastructure-id");
-      // TODO register items ASYNC
+      // TODO register items ASYNC and add them to registered file
       resolve(toRegister);
     }
   );
