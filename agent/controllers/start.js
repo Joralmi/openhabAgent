@@ -8,7 +8,7 @@ exports.start = function (req, res, next) {
   var oids = [];
   login.logAgent()
   .then(function(response){
-    return registrationStatus.oids();
+    return registrationStatus.read();
   })
   .then(function(response){
     return login.logItems(response);

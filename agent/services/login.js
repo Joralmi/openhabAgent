@@ -21,7 +21,8 @@ exports.logAgent = function(){
 
 // Modify to be able to register items
 // Return registration status of each item
-exports.logItems = function(){
+exports.logItems = function(data){
+  var oids = getOids(data);
   return new Promise(
     function(resolve, reject) {
       request.send('Items', 'objects/login', 'GET', {})
@@ -34,4 +35,16 @@ exports.logItems = function(){
       })
     }
   );
+}
+
+// Private functions
+/*
+Get oids from JSON
+*/
+function getOids(data){
+  var oids = [];
+  for(var i = 0, l = data.length; i < l; i++){
+    oids.push(data[i].oid);
+  }
+  return oids;
 }
