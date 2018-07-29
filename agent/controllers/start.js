@@ -1,18 +1,17 @@
 'use strict';
 
-var logAgent = require('../services/logAgent'),
-    logItems = require('../services/logItems'),
-    getRegistered = require('../services/getRegistered'),
+var login = require('../services/login'),
+    registrationStatus = require('../services/registrationStatus'),
     logger = require('../../middlewares/logger');
 
 exports.start = function (req, res, next) {
   var oids = [];
-  logAgent.logAgent()
+  login.logAgent()
   .then(function(response){
-    return getRegistered.oids();
+    return registrationStatus.oids();
   })
   .then(function(response){
-    return logItems.logItems(response);
+    return login.logItems(response);
   })
   .then(function(response){
     res.json(response);
