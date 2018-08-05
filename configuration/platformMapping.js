@@ -7,8 +7,8 @@ exports.interactions = {
 };
 
 exports.types = {
-  "tradfri:0210" : {"type" : "adapters:Lightbulb", "keywords": ["ikea", "bulb", "dimmable", "white spectrum"]},
-  "tradfri:0220" : {"type" : "adapters:Lightbulb", "keywords": ["ikea", "bulb", "dimmable", "color"]},
+  "tradfri:0220" : {"type" : "adapters:Lightbulb", "keywords": ["ikea", "bulb", "dimmable", "white spectrum"]},
+  "tradfri:0210" : {"type" : "adapters:Lightbulb", "keywords": ["ikea", "bulb", "dimmable", "color"]},
   "tradfri:0830" : {"type" : "adapters:Battery", "keywords": ["ikea", "controller"]}
 };
 
@@ -25,7 +25,7 @@ exports.schema = {
     },
   "Number" :
     {
-      "battery_level" : {"type": "integer", "description": "Remaining battery in %"}
+      "adapters:StoredEnergy" : {"type": "integer", "description": "Remaining battery in %"}
     },
   "Switch" :
     {
