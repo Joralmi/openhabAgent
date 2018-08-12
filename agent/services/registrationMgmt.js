@@ -2,92 +2,105 @@
 
 // Global variables and objects
 var request = require('../../util/request'),
+    sync = require('../../util/sync'),
     config = require('../../configuration/configuration'),
+    registrationStatus = require('../services/registrationStatus'),
     logger = require('../../middlewares/logger');
 
 // Public functions
 exports.process = function(info){
   return new Promise(
     function(resolve, reject) {
-
-      // Items in registered file but not in tds file
-      var toRemove = findItems(info.registered, info.tds, "infrastructure-id");
-      // TODO update data.registered and registered.json ASYNC
-      fRemove(toRemove);
-
-      // Items in platform file but not in registered file
-      var toUnregister = findItems(info.platform, info.registered, "oid");
-      // unregister items
-      fUnregister(toUnregister)
-      .then(function (response) {
-        // Items in tds file but not in registered file
-        var toRegister = findItems(info.tds, info.registered, "infrastructure-id");
-        // TODO register items ASYNC and add them to registered file
-        fRegister(toRegister);
+      fRemove(info) // Update data.registered and registered.json ASYNC
+      .then(function(response){
+        return fUnregister(info); // Unregister items
       })
-      .catch(function(err){
-        reject(err);
+      .then(function(response){
+        return fRegister(info) // Register items and add them to registered file
       })
-
-      resolve(toRegister);
-
+      .then(function(response){
+        resolve(response);
+      })
+      .catch(function(error){
+        logger.debug(error);
+        reject(error);
+      });
     }
   );
 }
 
 //Private function
 
-function fUnregister(array){
+/**
+* @param {Object} ItemsInfo
+* @return {Promise}
+*/
+function fRemove(info){
   return new Promise(
     function(resolve, reject) {
-      sync.forEachAll(array,
-        function(value, allresult, next, otherParams) {
-          fUnregistering(value, otherParams, function(value, error, success, message) {
-            allresult.push({value: value, error: error, success: success, message: message});
-            next();
-          });
-        },
-      function(allresult) {
-        if(allresult.length === items.length){
-          logger.debug('Completed async handler: ' + JSON.stringify(allresult));
-          resolve(true);
+      var newArray = [];
+      // Items in registered file but not in tds file
+      var toRemove = findItems(info.registered, info.tds, "infrastructure-id");
+      // Store a new array with devices that do not have to be removed
+      for(var i = 0, l = info.registered.length; i < l; i++){
+        if(array.indexOf(info.registered[i].oid) === -1){
+          newArray.push(info.registered[i]);
         }
-      },
-      false,
-      {}
-    );
-  });
+      }
+      // Assign only the values that are not removed
+      info.registered = newArray;
+      // Update registered.json
+      return registrationStatus.write(newArray);
+    }
+  );
 }
 
-function fUnregistering(array){}
-
-function fRegister(items){
+/**
+* @param {Object} ItemsInfo
+* @return {Promise} Array with things registered
+*/
+function fRegister(info){
   return new Promise(
     function(resolve, reject) {
-      sync.forEachAll(items,
-        function(value, allresult, next, otherParams) {
-          fRegistering(value, otherParams, function(value, error, success, message) {
-            allresult.push({value: value, error: error, success: success, message: message});
-            next();
-          });
-        },
-      function(allresult) {
-        if(allresult.length === items.length){
-          logger.debug('Completed async handler: ' + JSON.stringify(allresult));
-          resolve(true);
+      // Items in tds file but not in registered file
+      var toRegister = findItems(info.tds, info.registered, "infrastructure-id");
+      // Store a new array with devices that need to be registered
+      var newArray = [];
+      for(var i = 0, l = info.tds.length; i < l; i++){
+        if(toRegister.indexOf(info.tds[i].oid) !== -1){
+          newArray.push(info.tds[i]);
         }
-      },
-      false,
-      {}
-    );
-  });
+      }
+      // Register items
+      var toRegisterObj = { agid: config.agid, thingDescriptions: newArray};
+      request.send('Gateway', 'agents/' + config.agid + '/objects', 'POST', toRegisterObj)
+      .then(function (response) {
+        // Save new registered.json
+        return registrationStatus.write(info.tds);
+      })
+      .then(function (response) {
+        resolve(toRegister);
+      })
+      .catch(function (err) {
+        reject(err);
+      })
+    }
+  );
 }
 
-function fRegistering(){}
-
-function fRemove(array){
-  
-
+/**
+* @param {Object} ItemsInfo
+* @return {Promise}
+*/
+function fUnregister(info){
+  return new Promise(
+    function(resolve, reject) {
+      // Items in platform file but not in registered file
+      var toUnregister = findItems(info.platform, info.registered, "oid");
+      var toUnregisterObj = { agid: config.agid, oids: toUnregister};
+      return request.send('Gateway', 'agents/' + config.agid + '/objects/delete', 'POST', toUnregisterObj);
+    }
+  );
 }
 
 /*
