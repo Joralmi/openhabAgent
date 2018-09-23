@@ -12,6 +12,7 @@ Urls
 */
 config.urlOpenhab = "http://192.168.0.74:8080/rest/";
 config.urlGateway = "http://192.168.0.74:8181/api/";
+config.urlAirQuality = "http://192.168.0.165/";
 
 /*
 Headers
@@ -23,6 +24,11 @@ config.headOpenhab = {
 };
 config.headGateway = {
   'Authorization': 'Basic ' + new Buffer(config.credentialsGateway).toString('base64'),
+  'Content-Type' : 'application/json',
+  'Accept' : 'application/json',
+  'simple': false
+};
+config.headAirQuality = {
   'Content-Type' : 'application/json',
   'Accept' : 'application/json',
   'simple': false

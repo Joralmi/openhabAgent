@@ -1,8 +1,9 @@
 'use strict';
 var express = require('express'),
 router = express.Router(),
-cDiscovery = require('../controllers/discovery');
+cDiscovery = require('../controllers/discovery'),
+cInterfaces = require('../controllers/interfaces');
 
-// respond with "hello world" when a GET request is made to the homepage
 module.exports = router
-.get('/discovery', cDiscovery.discovery);
+.get('/discovery', cDiscovery.discovery)
+.get('/airQuality', cInterfaces.getAirQuality);
