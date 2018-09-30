@@ -4,11 +4,18 @@ var sDiscovery = require('../services/discovery'),
     manageTds = require('../services/manageTds');
 
 exports.discovery = function (req, res, next) {
-  var tds;
-  sDiscovery.discover()
+  var tdsOpenhab = [];
+  var tdsStatic = [];
+  var tds = [];
+  sDiscovery.openhabDiscovery()
   .then(function(response){
-    tds = response;
-    return manageTds.write(response);
+    tdsOpenhab = response;
+    return sDiscovery.staticDiscovery();
+  })
+  .then(function(response){
+    tdsStatic = response;
+    tds = tdsOpenhab.concat(tdsStatic);
+    return manageTds.write(tds);
   })
   .then(function(response){
     res.json(tds);

@@ -3,15 +3,30 @@
 var request = require('../../util/request'),
     mapping = require('../../configuration/platformMapping'),
     config = require('../../configuration/configuration'),
-    logger = require('../../middlewares/logger');
+    logger = require('../../middlewares/logger'),
+    fileMgmt = require('../../util/fileMgmt');
 
-exports.discover = function () {
+exports.openhabDiscovery = function () {
   return new Promise(function(resolve, reject){
     var info;
     request.send('Openhab', 'things', 'GET', {})
     .then(function(response){
       info = parseDiscovery(JSON.parse(response));
       resolve(info);
+    })
+    .catch(function(err){
+      logger.debug(err);
+      reject(err);
+    });
+  });
+};
+
+exports.staticDiscovery = function () {
+  return new Promise(function(resolve, reject){
+    var info;
+    fileMgmt.read('./configuration/td_air_sensor.json')
+    .then(function(response){
+      resolve(JSON.parse(response));
     })
     .catch(function(err){
       logger.debug(err);

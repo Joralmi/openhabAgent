@@ -1,0 +1,16 @@
+{
+  "adapter-id":"nodemcu",
+  "name":"Quality environment sensor",
+  "infrastructure-id":"airsensor1",
+  "type":"adapters:IndoorClimateQualitySensor",
+  "keywords":["nodemcu","mq-135","humidity","temperature","CO2"],
+  "properties":[
+    { "pid":"AmbientProperty",
+      "read_link":{
+        "href":"/objects/{oid}/properties/{pid}",
+        "output":{"type":"object","description":"{temperature, humidity,CO2}"}
+      },
+      "monitors":"adapters:AmbientProperty"
+    }
+  ]
+}
